@@ -1,20 +1,20 @@
 Vue.component(
-  'shell',
+  'omnicanvas-debug',
   {
     template:
     `
       <div class="grid">
         <div class="grid-header">
           <h1>OmniTool</h1>
-          <oct-button @click="getObjectCount">Re-fetch</oct-button>
-          <oct-button @click="toggleDevTools">Toggle dev visualiser</oct-button>
-          <oct-button @click="saveState">Save state</oct-button>
-          <oct-button v-if="savedState" @click="restoreState">Restore state</oct-button>
+          <button @click="getObjectCount">Re-fetch</button>
+          <button @click="toggleDevTools">Toggle dev visualiser</button>
+          <button @click="saveState">Save state</button>
+          <button v-if="savedState" @click="restoreState">Restore state</button>
         </div>
 
         <div class="grid-left-column">
 
-          <p>There are {{ objects.length }} objects in the OmniCanvas stage</p>
+          <p>There are {{ objectCount }} objects in the OmniCanvas stage</p>
 
           <omnicanvas-object
             v-for="(object, key) in objects"
@@ -23,8 +23,6 @@ Vue.component(
             :active="activeElementId === object.id"
             @click="onClickObject(object)"
           />
-
-          <p>Listened to {{ events.length }} events</p>
 
         </div>
 
@@ -35,6 +33,10 @@ Vue.component(
             :object="selectedObject"
           />
 
+        </div>
+
+        <div class="grid-footer">
+          Footer?
         </div>
       </div>
     `,
@@ -49,25 +51,6 @@ Vue.component(
         selectedObject: null,
 
         savedState: null,
-
-        events: [],
-
-        api: {
-          canvas: {
-            countObjects: {
-              handler: (e) => {
-                this.objectCount = e;
-              }
-            },
-
-            getObjects: {
-              handler: (e) => {
-                console.log(e);
-                this.objects = e;
-              }
-            },
-          }
-        },
       };
     },
 
@@ -76,22 +59,20 @@ Vue.component(
         console.log('checking...');
         this.iterator += 1;
 
-        browser.runtime.sendMessage({
-          type: 'get',
-          subject: 'canvas',
-          method: 'countObjects'
-        });
-      },
+        browser.devtools.inspectedWindow.eval(
+          "studioCanvas.getObjects().length",
+          (result, isException) => {
+            if (isException) {
+              console.log("Undefined studioCanvas");
+            } else {
+              this.objectCount = result;
 
-      getObjects() {
-        console.log('checking objects...');
-        this.iterator += 1;
+              this.fetchObjectData();
 
-        browser.runtime.sendMessage({
-          type: 'get',
-          subject: 'canvas',
-          method: 'getObjects'
-        });
+              this.getActiveElementId();
+            }
+          }
+        );
       },
 
       fetchObjectData() {
@@ -163,42 +144,18 @@ Vue.component(
           }
         );
       },
-
-      onEvent(event) {
-        console.log(event);
-        if (event.name === 'rendered') {
-          this.onRendered();
-        }
-
-        this.events.push(event);
-      },
-
-      onRendered() {
-        // this.getObjectCount();
-        this.getObjects();
-      },
     },
 
     mounted() {
-      console.log('mounted');
-      const port = browser.runtime.connect(null, { name: "octo-panel" });
-      port.onMessage.addListener((message) => {
-        console.log(message);
-
-        if (message.type === 'event') {
-          this.onEvent(message.event);
+      browser.runtime.sendMessage(
+        {
+          type: 'get',
+          fields: ['objectCount'],
+        },
+        (response) => {
+          this.objectCount = response.objectCount;
         }
-
-        if (message.request && message.response) {
-          console.log(this.api);
-          const subject = message.request.subject;
-          const method = message.request.method;
-
-          if (this.api[subject] && this.api[subject][method]) {
-            this.api[subject][method].handler(message.response, message.request);
-          }
-        }
-      });
+      );
     }
   }
 );

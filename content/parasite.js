@@ -18,6 +18,18 @@ const routes = {
       handler() {
         return window.wrappedJSObject.studioCanvas.getObjects().length;
       }
+    },
+    getObjects: {
+      handler() {
+        const objects = [];
+        const objs = window.wrappedJSObject.studioCanvas.getObjects()
+
+        for (let i = 0; i < objs.length; ++i) {
+          objects.push(objs[i].toDelta());
+        }
+
+        return objects;
+      }
     }
   }
 };
@@ -32,6 +44,7 @@ const handleBackgroundRequest = (request) => {
 }
 
 const handleGetRequest = (request) => {
+  console.log(request);
   return routes[request.subject][request.method].handler();
 }
 
