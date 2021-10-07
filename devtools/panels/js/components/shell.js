@@ -51,6 +51,17 @@ Vue.component(
         savedState: null,
 
         events: [],
+
+        api: {
+          canvas: {
+            countObjects: {
+              handler: (e) => {
+                console.log(e, this);
+                this.objectCount = e;
+              }
+            }
+          }
+        },
       };
     },
 
@@ -142,17 +153,14 @@ Vue.component(
       const port = browser.runtime.connect(null, { name: "octo-panel" });
       port.onMessage.addListener((message) => {
         console.log(message);
-        if (message.type === 'event') {
-          message.event.timestamp = Date.now().toLocaleString('en-GB');
-          this.events.push(message.event);
-        }
 
         if (message.request && message.response) {
-          console.log(message.request.method);
-          console.log(message.response);
-          // this is a response from a request we sent
-          if (message.request.method === 'countObjects') {
-            this.objectCount = message.response;
+          console.log(this.api);
+          const subject = message.request.subject;
+          const method = message.request.method;
+
+          if (this.api[subject] && this.api[subject][method]) {
+            this.api[subject][method].handler(message.response, message.request);
           }
         }
       });
