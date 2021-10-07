@@ -12,6 +12,7 @@ browser.runtime.onConnect.addListener((port) => {
 });
 
 const handleMessage = (request, sender, sendResponse) => {
+  console.log(request);
   if (sender.envType === 'content_child') {
     handleMessageFromContent(request, sender, sendResponse);
   } else if (sender.envType === 'devtools_child') {
@@ -29,10 +30,10 @@ const handleMessageFromDevTools = (request, sender, sendResponse) => {
   console.log('From dev tools');
   // find the active tab, then send the message on
   browser.tabs.query({ active: true })
-    .then((tabs) => sendMessageToContent(tabs, request));
+    .then((tabs) => sendMessageToContent(tabs, request, sendResponse));
 }
 
-const sendMessageToContent = (tabs, request) => {
+const sendMessageToContent = (tabs, request, sendResponse) => {
   for (let tab of tabs) {
     browser.tabs.sendMessage(
       tab.id,
@@ -40,6 +41,8 @@ const sendMessageToContent = (tabs, request) => {
     ).then(response => {
       console.log("Message received from content script:");
       console.log(response);
+      // sendResponse(response);
+      devPort.postMessage({ request, response });
     });
   }
 }

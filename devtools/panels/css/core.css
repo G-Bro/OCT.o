@@ -1,0 +1,131 @@
+body {
+  font-family: "Lato", sans-serif;
+  background: #212121;
+  color: white;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 100px auto;
+  grid-template-areas:
+    "header header"
+    "left right"
+    "footer footer";
+}
+
+.grid-header {
+  grid-area: header;
+}
+
+.grid-left-column {
+  grid-area: left;
+}
+
+.grid-right-column {
+  grid-area: right;
+}
+
+.grid-footer {
+  grid-area: footer;
+}
+
+.d-inline-block {
+  display: inline-block;
+}
+
+.badge {
+  display: inline-block;
+  border-radius: 4px;
+  padding: 0.3em;
+}
+
+.pink-bg {
+  background-color: #DD176D;
+}
+
+.yellow-bg {
+  background-color: #F89815;
+}
+
+.green-bg {
+  background-color: #86b302;
+}
+
+.blue-bg {
+  background-color: #0aadff;
+}
+
+.pink {
+  color: #DD176D;
+}
+
+.yellow {
+  color: #F89815;
+}
+
+.green {
+  color: #86b302;
+}
+
+.blue {
+  color: #0aadff;
+}
+
+.object-row {
+  border-bottom: 1px solid #555;
+  padding: 0.25em 0.5em;
+}
+
+.object-row:hover {
+  background: #363636;
+  cursor: pointer;
+}
+
+.pretty-print {
+  vertical-align: top;
+}
+
+.pretty-print .data.boolean {
+  color: #f89815;
+}
+
+.pretty-print .data.string {
+  color: #86b302;
+}
+
+.pretty-print .data.number {
+  color: #DD176D;
+}
+
+.mb-0 {
+  margin-bottom: 0;
+}
+
+.mb-1 {
+  margin-bottom: 0.25em;
+}
+
+.mb-2 {
+  margin-bottom: 0.5em;
+}
+
+.mb-3 {
+  margin-bottom: 1em;
+}
+
+.purple {
+  color: #6529ba;
+}
+
+.purple-bg {
+  background-color: #6529ba;
+}
+
+.cyan {
+  color: #2dc5b0;
+}
+
+.cyan-bg {
+  background-color: #2dc5b0;
+}

@@ -8,7 +8,7 @@ function unInitialisePanel() {
 
 browser.devtools.panels.create(
   "OCT.o",
-  "./icon.png",
+  "./resources/logo-x64.png",
   "./panels/panel.html"
 ).then((newPanel) => {
   newPanel.onShown.addListener(initialisePanel);
