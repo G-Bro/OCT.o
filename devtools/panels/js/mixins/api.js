@@ -1,0 +1,47 @@
+const devPort = browser.runtime.connect(null, { name: "octo-panel" });
+
+const apiMixin = {
+  data() {
+    return {
+      lastUpdateTime: 0,
+      maxUpdateFrequency: 1000,
+    }
+  },
+
+  methods: {
+    runQuery(type, subject, method, arguments) {
+      const frameTime = Date.now();
+
+      if (frameTime - this.lastUpdateTime > this.maxUpdateFrequency) {
+        browser.runtime.sendMessage({
+          type,
+          subject,
+          method,
+          arguments
+        });
+
+        this.lastUpdateTime = frameTime;
+      } else {
+        // console.log('cancelled query due to time');
+      }
+    },
+
+    registerApiListeners(options) {
+      console.log('registering API listeners');
+      devPort.onMessage.addListener((message) => {
+        if (options.eventHandler && message.type === 'event') {
+          options.eventHandler(message.event);
+        }
+
+        console.log(message.request, message.response, options);
+
+        if (message.request && message.response) {
+          const method = message.request.method;
+          if (options[method]) {
+            options[method](message.response, message.request);
+          }
+        }
+      });
+    },
+  },
+}

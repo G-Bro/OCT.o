@@ -2,8 +2,6 @@ let devPort = {};
 
 // this is triggered when the panels connect to the background
 browser.runtime.onConnect.addListener((port) => {
-  console.log(port.name === 'octo-panel')
-
   port.postMessage({ greeting: 'hello?' });
 
   handleMessageFromDevTools({ type: 'background', instruction: 'attach' });
@@ -12,7 +10,6 @@ browser.runtime.onConnect.addListener((port) => {
 });
 
 const handleMessage = (request, sender, sendResponse) => {
-  console.log(request);
   if (sender.envType === 'content_child') {
     handleMessageFromContent(request, sender, sendResponse);
   } else if (sender.envType === 'devtools_child') {
@@ -21,13 +18,11 @@ const handleMessage = (request, sender, sendResponse) => {
 }
 
 const handleMessageFromContent = (request, sender, sendResponse) => {
-  console.log('From content');
   // TODO
   devPort.postMessage(request);
 }
 
 const handleMessageFromDevTools = (request, sender, sendResponse) => {
-  console.log('From dev tools');
   // find the active tab, then send the message on
   browser.tabs.query({ active: true })
     .then((tabs) => sendMessageToContent(tabs, request, sendResponse));
