@@ -57,6 +57,8 @@ Vue.component(
         savedStates: [],
 
         inspectedState: null,
+
+        chromeCompatibilityMode,
       }
     },
 

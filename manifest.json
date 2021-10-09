@@ -1,11 +1,12 @@
 {
   "manifest_version": 2,
+  "author": "George Broadhurst",
 
   "name": "OCT.o",
   "description": "OmniCanvas Toolkit",
-  "version": "a0.1",
+  "version": "0.0.1",
 
-  "devtools_page": "devtools/index.html",
+  "devtools_page": "./devtools/index.html",
 
   "content_scripts": [
     {
@@ -22,5 +23,10 @@
 
   "permissions": [
     "<all_urls>"
-  ]
+  ],
+
+  "icons": {
+    "32": "resources/images/logo-x32.png",
+    "64": "resources/images/logo-x64.png"
+  }
 }
