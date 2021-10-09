@@ -4,17 +4,16 @@ Vue.component(
     template:
     `
       <div class="grid dark">
-        <div class="grid-header">
+        <div class="grid-header header mb-3">
           <div class="grid-left-column">
             <img class="d-inline-block" src="./../resources/logo-x64.png" />
-            <h1 class="d-inline-block">OCTO</h1>
           </div>
 
-          <div class="grid-right-column">
-            <oct-button @click="setStage('stage')">Stage</oct-button>
-            <oct-button @click="setStage('objects')">Objects</oct-button>
-            <oct-button @click="setStage('events')">Events</oct-button>
-            <oct-button @click="setStage('states')">States</oct-button>
+          <div class="grid-right-column align-right">
+            <div class="nav-block clickable" :class="{active: activeStage === 'page-stage'}" @click="setStage('stage')">Stage</div>
+            <div class="nav-block clickable" :class="{active: activeStage === 'page-objects'}" @click="setStage('objects')">Objects</div>
+            <div class="nav-block clickable" :class="{active: activeStage === 'page-events'}" @click="setStage('events')">Events</div>
+            <div class="nav-block clickable" :class="{active: activeStage === 'page-states'}" @click="setStage('states')">States</div>
             <oct-button @click="toggleDevTools">Toggle dev visualiser</oct-button>
           </div>
         </div>

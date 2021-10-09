@@ -5,36 +5,44 @@ Vue.component(
     <div class="page-grid">
       <div class="grid-left-column">
         <div>
-          <oct-button img="./icons/save_x64.png" @click="saveState">Save state</oct-button>
-
-          <oct-row v-for="(state, i) in savedStates" :key="i" class="row-grid">
-            <div class="row-grid-left">
+          <oct-row
+            v-for="(state, i) in savedStates"
+            :key="i"
+            :index="i"
+            grid
+          >
+            <template #image>
               <img class="state-preview" :src="state.thumbnail" />
-            </div>
-            <div class="row-grid-header">
+            </template>
+            <template #header>
               <p>Key: {{ i }}</p>
-            </div>
-            <div class="row-grid-footer">
-              <oct-button
-                colour="purple"
-                img="./icons/restore_x64.png"
-                @click="restoreState(state)"
-              />
-              <oct-button
-                colour="red"
-                img="./icons/bin_x64.png"
-                @click="deleteState(state, i)"
-              />
-              <oct-button
-                colour="yellow"
-                img="./icons/json_x64.png"
-                @click="inspectState(state, i)"
-              />
-            </div>
+            </template>
+            <template #footer>
+              <div class="align-right">
+                <oct-button
+                  colour="purple"
+                  img="./icons/restore_x64.png"
+                  @click="restoreState(state)"
+                />
+                <oct-button
+                  colour="red"
+                  img="./icons/bin_x64.png"
+                  @click="deleteState(state, i)"
+                />
+                <oct-button
+                  colour="yellow"
+                  img="./icons/json_x64.png"
+                  @click="inspectState(state, i)"
+                />
+              </div>
+            </template>
           </oct-row>
         </div>
       </div>
       <div class="grid-right-column">
+        <div class="align-right">
+          <oct-button img="./icons/save_x64.png" @click="saveState">Save state</oct-button>
+        </div>
         <div v-if="inspectedState">
           {{ inspectedState.template }}
         </div>
@@ -68,17 +76,6 @@ Vue.component(
           'fromTemplate',
           [JSON.stringify(state.template), true],
         );
-
-        // browser.devtools.inspectedWindow.eval(
-        //   `studioCanvas.fromTemplate(${this.savedState}, true)`,
-        //   (result, isException) => {
-        //     if (isException) {
-        //       console.log("Could not restore state");
-        //     }
-
-        //     console.log(result);
-        //   }
-        // );
       },
 
       deleteState(state, index) {
@@ -86,8 +83,6 @@ Vue.component(
       },
 
       onReceiveState(response) {
-        console.log(response);
-
         this.savedStates.push(response);
       },
 

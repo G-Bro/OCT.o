@@ -34,8 +34,8 @@ const sendMessageToContent = (tabs, request, sendResponse) => {
       tab.id,
       request,
     ).then(response => {
-      console.log("Message received from content script:");
-      console.log(response);
+    //   console.log("Message received from content script:");
+    //   console.log(response);
       // sendResponse(response);
       devPort.postMessage({ request, response });
     });

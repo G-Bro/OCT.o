@@ -27,13 +27,10 @@ const apiMixin = {
     },
 
     registerApiListeners(options) {
-      console.log('registering API listeners');
       devPort.onMessage.addListener((message) => {
         if (options.eventHandler && message.type === 'event') {
           options.eventHandler(message.event);
         }
-
-        console.log(message.request, message.response, options);
 
         if (message.request && message.response) {
           const method = message.request.method;

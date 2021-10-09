@@ -3,7 +3,7 @@ Vue.component(
   {
     template: `
       <a
-        class="oct-button"
+        class="oct-button clickable"
         href="#"
         @click.prevent="$emit(\'click\')"
         :class="colourClass"

@@ -1,6 +1,6 @@
 Vue.component(
   'page-objects',
   {
-    template: '<div><p>Objects</p></div>',
+    template: '<div><p>Objects: coming soon</p></div>',
   }
 );
