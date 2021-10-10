@@ -5,8 +5,8 @@ Vue.component(
       <div
         class="oct-row"
         :class="{
-          even: index % 2 === 0,
-          odd: index % 2,
+          even: index % 2,
+          odd: index % 2 === 0,
           'row-grid': grid
         }"
       >

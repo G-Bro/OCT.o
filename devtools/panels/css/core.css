@@ -1,25 +1,41 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
 :root {
-  --main-bg-color: #212121;
   --standard-padding: 0.5em;
   --small-padding: 0.25em;
   --big-padding: 1em;
 }
 
-body {
-  font-family: "Lato", sans-serif;
-  background-color: var(--main-bg-color);
-  color: white;
-  margin: 0;
+.main.dark {
+  --main-bg-color: #212121;
+  --off-bg-color: #282828;
+  --main-text-color: #fff;
 }
 
-* {
-  box-sizing: border-box;
+.main.light {
+  --main-bg-color: #fff;
+  --off-bg-color: #eee;
+  --main-text-color: #212121;
+}
+
+.main {
+  font-family: "Lato", sans-serif;
+  background-color: var(--main-bg-color);
+  color: var(--main-text-color);
+  margin: 0;
+  height: 100vh;
 }
 
 .grid {
   display: grid;
   grid-template-columns: 50% 50%;
-  grid-template-rows: auto auto;
+  grid-template-rows: 92px auto;
   grid-template-areas:
     "header header"
     "body body"
@@ -243,10 +259,6 @@ body {
   display: inline-block;
 }
 
-.dark .icon {
-  filter: invert(1);
-}
-
 .clickable {
   cursor: pointer;
 }
@@ -309,13 +321,17 @@ body {
   opacity: 0.125;
 }
 
+.oct-button .icon {
+  filter: invert(1);
+}
+
 .oct-row {
   display: block;
   width: 100%;
 }
 
-.oct-row.even {
-  background-color: #282828;
+.oct-row.odd {
+  background-color: var(--off-bg-color);
 }
 
 .row-grid {

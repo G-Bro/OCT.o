@@ -3,7 +3,7 @@ Vue.component(
   {
     template:
     `
-      <div class="grid dark">
+      <div class="main grid" :class="themeName">
         <div class="grid-header header mb-3">
           <div class="grid-left-column">
             <img class="d-inline-block" src="./../resources/logo-x64.png" />
@@ -34,6 +34,12 @@ Vue.component(
       return {
         activeStage: 'page-states',
       };
+    },
+
+    computed: {
+      themeName() {
+        return browser.devtools.panels.themeName;
+      }
     },
 
     methods: {
