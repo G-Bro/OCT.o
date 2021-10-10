@@ -16,7 +16,7 @@ body {
   --col-pink: #ff3b6b;
   --col-blue: #0aadff;
   --col-yellow: #F89815;
-  --col-green: #86b302;
+  --col-green: #02ad1b;
   --col-purple: #6529ba;
   --col-cyan: #2dc5b0;
   --col-white: #fff;
@@ -320,8 +320,16 @@ body {
   float: right;
 }
 
-.bold {
+.w-bold {
   font-weight: bold;
+}
+
+.w-regular {
+  font-weight: regular;
+}
+
+.w-light {
+  font-weight: lighter;
 }
 
 /* Component CSS */
@@ -394,7 +402,7 @@ body {
 }
 
 .events-list {
-  max-height: calc(100vh - 200px);
+  max-height: calc(100vh - 420px);
   overflow-y: scroll;
 }
 

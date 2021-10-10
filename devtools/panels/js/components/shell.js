@@ -11,12 +11,20 @@ Vue.component(
               src="./../resources/logo-x64.png"
             />
             <div
-              v-if="attached"
               class="grid-right-column"
             >
-              <p class="mb-0">
+              <h4
+                v-if="attached"
+                class="mb-0 cyan"
+              >
                 OmniCanvas attached
-              </p>
+              </h4>
+              <h4
+                v-else
+                class="mb-0 red"
+              >
+                No OmniCanvas detected
+              </h4>
             </div>
           </div>
 

@@ -19,6 +19,9 @@ Vue.component(
               />
             </div>
           </div>
+          <div class="chart-row">
+            <div id="chartContainer"></div>
+          </div>
           <div class="events-list" ref="eventsList" @scroll="onEventsScroll">
             <oct-row
               v-for="(event, i) in events"
@@ -32,7 +35,7 @@ Vue.component(
                   <p class="d-inline-block">event details will go here</p>
                 </div>
                 <div class="px-3 float-right d-inline-block">
-                  <p class="purple-bg white bold tag"><small>5.6ms</small></p>
+                  <p class="purple-bg white w-bold tag"><small>5.6ms</small></p>
                 </div>
               </div>
             </oct-row>
@@ -60,7 +63,16 @@ Vue.component(
 
         events: [],
 
+        batchedEvents: [],
+
         autoScroll: true,
+
+        chart: null,
+        chartIndex: 30,
+
+        intervalDuration: 1000,
+        intervalData: 0,
+        intervalTimeout: null,
       };
     },
 
@@ -72,7 +84,7 @@ Vue.component(
 
     methods: {
       handleEvent(event) {
-        this.events.push(event);
+        this.batchedEvents.push(event);
 
         // if (event.name === 'rendered') {
         //   this.onOmniCanvasRendered();
@@ -81,31 +93,13 @@ Vue.component(
         if (this.autoScroll) {
           this.scrollToBottom();
         }
+
+        this.intervalData += 1;
       },
 
       scrollToBottom() {
         this.eventsList.scrollTop = this.eventsList.scrollHeight;
       },
-
-      // onOmniCanvasRendered() {
-      //   this.getObjectCount();
-      // },
-
-      // getObjectCount() {
-      //   console.log('checking...');
-      //   this.iterator += 1;
-
-      //   this.runQuery(
-      //     'get',
-      //     'canvas',
-      //     'countObjects',
-      //   );
-      // },
-
-      // onCountObjects(response) {
-      //   console.log('count objects response', response);
-      //   this.objectCount = response;
-      // },
 
       onEventsScroll(e) {
         const distanceToBottom = this.eventsList.scrollHeight - this.eventsList.scrollTop - this.eventsList.offsetHeight;
@@ -120,6 +114,68 @@ Vue.component(
       clearHistory() {
         this.events = [];
       },
+
+      beginInterval() {
+        this.intervalTimeout = setInterval(
+          () => {
+            console.log(this.intervalData);
+
+            this.chart.addDataPoint(this.chartIndex.toString(), [this.intervalData]);
+            this.intervalData = 0;
+            this.chartIndex += 1;
+            this.chart.removeDataPoint(0);
+
+            this.events = this.events.concat(this.batchedEvents);
+            this.batchedEvents = [];
+          },
+          this.intervalDuration
+        );
+      },
+
+      initialiseChart() {
+        const prefilledLabels = [];
+        const prefilledData = [];
+        for (i = 0; i < 30; ++i) {
+          prefilledLabels[i] = "0";
+          prefilledData[i] = 0;
+        }
+
+        const data = {
+          labels: prefilledLabels,
+          datasets: [
+            {
+              name: 'Events',
+              type: 'line',
+              values: prefilledData,
+            }
+          ],
+        };
+
+        this.chart = new frappe.Chart(
+          '#chartContainer',
+          {
+            title: 'Events per second',
+            data: data,
+            type: 'line',
+            height: 200,
+            lineOptions: {
+              regionFill: 1,
+              hideDots: 1,
+              spline: 1,
+            },
+            axisOptions: {
+              xAxisMode: 'tick',
+              yAxisMode: 'tick',
+            },
+            yMarkers: [
+              {
+                label: 'Warning',
+                value: 60
+              }
+            ],
+          }
+        )
+      },
     },
 
     mounted() {
@@ -129,6 +185,14 @@ Vue.component(
           countObjects: this.onCountObjects,
         }
       );
+
+      this.beginInterval();
+
+      this.initialiseChart();
+    },
+
+    beforeDestroy() {
+      this.endInterval();
     }
   }
 );

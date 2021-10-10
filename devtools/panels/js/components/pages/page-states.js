@@ -90,7 +90,7 @@ Vue.component(
 
       inspectState(state, index) {
         this.inspectedState = state;
-      }
+      },
     },
 
     mounted() {
