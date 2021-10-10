@@ -1,5 +1,3 @@
-console.log('Parasite attached');
-
 let omniCanvas = null;
 let chromeCompatibilityMode = false;
 
@@ -98,18 +96,31 @@ browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
 setTimeout(
   () => {
     browser.runtime.sendMessage('Henlo my frond');
-
-    if (!omniCanvas) {
-      omniCanvas = retrieveWindowVariables('studioCanvas');
-
-      console.log('attached to canvas', omniCanvas, omniCanvas.canvasElement);
-
-      // omniCanvas = window.wrappedJSObject.studioCanvas;
-      window.addEventListener('rendered', onCanvasRendered);
-    }
   },
   3000,
 );
+
+function fetchCanvas() {
+  omniCanvas = retrieveWindowVariables('studioCanvas');
+
+  if (omniCanvas) {
+    console.log('attached to canvas', omniCanvas, omniCanvas.canvasElement);
+
+    // omniCanvas = window.wrappedJSObject.studioCanvas;
+    window.addEventListener('omnicanvas-rendered', onCanvasRendered);
+    browser.runtime.sendMessage({ type: 'command', message: 'attached' })
+  } else {
+    console.log('no canvas found yet');
+    window.addEventListener('omnicanvas-initialised', () => {
+      console.log('initalised event received');
+      fetchCanvas();
+    });
+  }
+}
+
+fetchCanvas();
+
+// ! Chrome compatability code below
 
 /**
  * Chrome doesn't support nice transfer of variables from the window to
@@ -165,13 +176,4 @@ function retrieveWindowVariables(variable) {
   console.log(returnValue);
 
   return returnValue;
-}
-
-omniCanvas = retrieveWindowVariables('studioCanvas');
-
-if (omniCanvas) {
-  console.log('attached to canvas', omniCanvas, omniCanvas.canvasElement);
-
-  // omniCanvas = window.wrappedJSObject.studioCanvas;
-  window.addEventListener('rendered', onCanvasRendered);
 }

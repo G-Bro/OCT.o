@@ -5,8 +5,19 @@ Vue.component(
     `
       <div class="main grid" :class="themeName">
         <div class="grid-header header mb-3">
-          <div class="grid-left-column">
-            <img class="d-inline-block" src="./../resources/logo-x64.png" />
+          <div class="grid-left-column logo-box">
+            <img
+              class="grid-left-column"
+              src="./../resources/logo-x64.png"
+            />
+            <div
+              v-if="attached"
+              class="grid-right-column"
+            >
+              <p class="mb-0">
+                OmniCanvas attached
+              </p>
+            </div>
           </div>
 
           <div class="grid-right-column align-right">
@@ -22,6 +33,7 @@ Vue.component(
           <keep-alive>
             <component
               :is="activeStage"
+              @attached="onAttached"
             />
           </keep-alive>
         </div>
@@ -33,6 +45,8 @@ Vue.component(
     data() {
       return {
         activeStage: 'page-states',
+
+        attached: false,
       };
     },
 
@@ -56,6 +70,10 @@ Vue.component(
             }
           }
         );
+      },
+
+      onAttached() {
+        this.attached = true;
       },
     },
   }

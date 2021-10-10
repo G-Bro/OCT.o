@@ -1,4 +1,12 @@
-let devPort = {};
+const delayedQueries = [];
+let devPort = {
+  postMessage(request) {
+    // if the true dev port hasn't been initialised yet, cache any requests
+    // here and send them when it has been
+    delayedQueries.push(request);
+  }
+};
+
 let chromeCompatibilityMode = false;
 
 console.log('loaded');
@@ -15,6 +23,15 @@ browser.runtime.onConnect.addListener((port) => {
   handleMessageFromDevTools({ type: 'background', instruction: 'attach' });
 
   devPort = port;
+
+  if (delayedQueries.length) {
+    console.log('sending delayed queries');
+    delayedQueries.forEach((query) => {
+      devPort.postMessage(query);
+    });
+
+    delayedQueries.splice(0);
+  }
 });
 
 const handleMessage = (request, sender, sendResponse) => {

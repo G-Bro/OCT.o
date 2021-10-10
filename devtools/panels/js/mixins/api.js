@@ -34,9 +34,18 @@ const apiMixin = {
       }
     },
 
+    onCommand(command) {
+      if (command.message === 'attached') {
+        this.$emit('attached');
+      }
+    },
+
     registerApiListeners(options) {
       devPort.onMessage.addListener((message) => {
-        console.log('receipt', message);
+        if (message.type === 'command') {
+          this.onCommand(message);
+        }
+
         if (options.eventHandler && message.type === 'event') {
           options.eventHandler(message.event);
         }

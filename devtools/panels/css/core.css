@@ -67,6 +67,13 @@ body {
   padding: 0.5em 0.5em 0;
 }
 
+.logo-box {
+  display: grid;
+  grid-template-columns: 80px auto;
+  grid-template-areas:
+    "left right";
+}
+
 .grid-header {
   grid-area: header;
 }
