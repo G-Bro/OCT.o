@@ -3,105 +3,70 @@ Vue.component(
   {
     template:
     `
-      <div class="grid">
-        <div class="grid-header">
-          <h1>OmniTool</h1>
-          <oct-button @click="getObjectCount">Re-fetch</oct-button>
-          <oct-button @click="toggleDevTools">Toggle dev visualiser</oct-button>
-          <oct-button @click="saveState">Save state</oct-button>
-          <oct-button v-if="savedState" @click="restoreState">Restore state</oct-button>
+      <div class="main grid" :class="themeName">
+        <div class="grid-header header mb-3">
+          <div class="grid-left-column logo-box">
+            <img
+              class="grid-left-column"
+              src="./../resources/logo-x64.png"
+            />
+            <div
+              class="grid-right-column"
+            >
+              <h4
+                v-if="attached"
+                class="mb-0 cyan"
+              >
+                OmniCanvas attached
+              </h4>
+              <h4
+                v-else
+                class="mb-0 red"
+              >
+                No OmniCanvas detected
+              </h4>
+            </div>
+          </div>
+
+          <div class="grid-right-column align-right">
+            <div class="nav-block clickable" :class="{active: activeStage === 'page-stage'}" @click="setStage('stage')">Stage</div>
+            <div class="nav-block clickable" :class="{active: activeStage === 'page-objects'}" @click="setStage('objects')">Objects</div>
+            <div class="nav-block clickable" :class="{active: activeStage === 'page-events'}" @click="setStage('events')">Events</div>
+            <div class="nav-block clickable" :class="{active: activeStage === 'page-states'}" @click="setStage('states')">States</div>
+            <oct-button @click="toggleDevTools">Toggle dev visualiser</oct-button>
+          </div>
         </div>
 
-        <div class="grid-left-column">
-
-          <p>There are {{ objects.length }} objects in the OmniCanvas stage</p>
-
-          <omnicanvas-object
-            v-for="(object, key) in objects"
-            :key="key"
-            :object="object"
-            :active="activeElementId === object.id"
-            @click="onClickObject(object)"
-          />
-
-          <p>Listened to {{ events.length }} events</p>
-
-        </div>
-
-        <div class="grid-right-column">
-
-          <omnicanvas-object-details
-            v-if="selectedObject"
-            :object="selectedObject"
-          />
-
+        <div class="grid-body">
+          <keep-alive>
+            <component
+              :is="activeStage"
+              @attached="onAttached"
+            />
+          </keep-alive>
         </div>
       </div>
     `,
 
+    mixins: [apiMixin],
+
     data() {
       return {
-        objectCount: 0,
-        objects: [],
+        activeStage: 'page-states',
 
-        activeElementId: 0,
-
-        selectedObject: null,
-
-        savedState: null,
-
-        events: [],
-
-        api: {
-          canvas: {
-            countObjects: {
-              handler: (e) => {
-                this.objectCount = e;
-              }
-            },
-
-            getObjects: {
-              handler: (e) => {
-                console.log(e);
-                this.objects = e;
-              }
-            },
-          }
-        },
+        attached: false,
       };
     },
 
+    computed: {
+      themeName() {
+        return browser.devtools.panels.themeName;
+      }
+    },
+
     methods: {
-      getObjectCount() {
-        console.log('checking...');
-        this.iterator += 1;
-
-        browser.runtime.sendMessage({
-          type: 'get',
-          subject: 'canvas',
-          method: 'countObjects'
-        });
-      },
-
-      getObjects() {
-        console.log('checking objects...');
-        this.iterator += 1;
-
-        browser.runtime.sendMessage({
-          type: 'get',
-          subject: 'canvas',
-          method: 'getObjects'
-        });
-      },
-
-      fetchObjectData() {
-        const objects = [];
-        for (let i = 0; i < this.objectCount; ++i) {
-          const object = new OmniCanvasObject(i);
-          objects.push(object);
-        }
-
-        this.objects = objects;
+      setStage(stage) {
+        this.activeStage = `page-${stage}`;
       },
 
       toggleDevTools() {
@@ -115,53 +80,8 @@ Vue.component(
         );
       },
 
-      getActiveElementId() {
-        browser.devtools.inspectedWindow.eval(
-          "studioCanvas.activeEl.id",
-          (result, isException) => {
-            if (isException) {
-              console.log("Could not find active element");
-            }
-
-            this.activeElementId = result;
-          }
-        );
-      },
-
-      onClickObject(object) {
-        console.log('selecting object', object);
-
-        this.selectedObject = object;
-      },
-
-      saveState() {
-        browser.devtools.inspectedWindow.eval(
-          "JSON.stringify(studioCanvas.stageToTemplate())",
-          (result, isException) => {
-            if (isException) {
-              console.log("Could not save state");
-            }
-
-            console.log(result);
-
-            this.savedState = result;
-          }
-        );
-      },
-
-      restoreState() {
-        browser.devtools.inspectedWindow.eval(
-          `studioCanvas.fromTemplate(${this.savedState}, true)`,
-          (result, isException) => {
-            if (isException) {
-              console.log("Could not restore state");
-            }
-
-            console.log(result);
-
-            this.getObjectCount();
-          }
-        );
+      onAttached() {
+        this.attached = true;
       },
 
       onEvent(event) {
@@ -178,27 +98,5 @@ Vue.component(
         this.getObjects();
       },
     },
-
-    mounted() {
-      console.log('mounted');
-      const port = browser.runtime.connect(null, { name: "octo-panel" });
-      port.onMessage.addListener((message) => {
-        console.log(message);
-
-        if (message.type === 'event') {
-          this.onEvent(message.event);
-        }
-
-        if (message.request && message.response) {
-          console.log(this.api);
-          const subject = message.request.subject;
-          const method = message.request.method;
-
-          if (this.api[subject] && this.api[subject][method]) {
-            this.api[subject][method].handler(message.response, message.request);
-          }
-        }
-      });
-    }
   }
 );
