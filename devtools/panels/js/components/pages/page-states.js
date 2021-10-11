@@ -44,7 +44,7 @@ Vue.component(
           <oct-button img="./icons/save_x64.png" @click="saveState">Save state</oct-button>
         </div>
         <div v-if="inspectedState">
-          {{ inspectedState.template }}
+          <pretty-print-json :object="inspectedState.template" />
         </div>
       </div>
     </div>

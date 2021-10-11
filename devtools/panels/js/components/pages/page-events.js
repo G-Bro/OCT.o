@@ -181,6 +181,8 @@ Vue.component(
     mounted() {
       this.registerApiListeners(
         {
+          onConnect: this.onPortConnect,
+          onDisconnect: this.onPortDisconnect,
           eventHandler: this.handleEvent,
           countObjects: this.onCountObjects,
         }

@@ -12,14 +12,15 @@ body {
   --small-padding: 0.25em;
   --big-padding: 1em;
 
-  --col-red: #DD176D;
-  --col-pink: #ff3b6b;
+  --col-red: #e33e3a;
+  --col-pink: #e36eec;
   --col-blue: #0aadff;
   --col-yellow: #F89815;
   --col-green: #02ad1b;
   --col-purple: #6529ba;
   --col-cyan: #2dc5b0;
   --col-white: #fff;
+  --col-muted-grey: #888;
 }
 
 .main.dark {
@@ -39,7 +40,7 @@ body {
   background-color: var(--main-bg-color);
   color: var(--main-text-color);
   margin: 0;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .grid {
@@ -198,6 +199,7 @@ body {
 
 .pretty-print {
   vertical-align: top;
+  font-family: "consolas";
 }
 
 .pretty-print .data.boolean {
@@ -205,11 +207,42 @@ body {
 }
 
 .pretty-print .data.string {
-  color: var(--col-green);
+  color: var(--col-red);
 }
 
 .pretty-print .data.number {
+  color: var(--col-cyan);
+}
+
+.pretty-print .data-key {
   color: var(--col-pink);
+}
+
+.pretty-print .caret-column {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  position: relative;
+}
+
+.pretty-print .caret {
+  font-size: 2em;
+  text-decoration: none;
+  color: var(--col-muted-grey);
+  transition: all 0.25s ease;
+  position: absolute;
+  top: -50%;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+.pretty-print .caret.open {
+  transform: rotate(90deg);
+}
+
+.pretty-print-row p {
+  margin-bottom: 0;
 }
 
 .m-0 {
